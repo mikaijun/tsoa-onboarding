@@ -1,4 +1,3 @@
-// src/users/usersController.ts
 import {
   Body,
   Controller,
@@ -8,9 +7,15 @@ import {
   Query,
   Route,
   SuccessResponse,
+  Response,
 } from "tsoa";
 import { User } from "./user";
 import { UsersService, UserCreationParams } from "./usersService";
+
+interface ValidateErrorJSON {
+  message: "Validation failed";
+  details: { [name: string]: unknown };
+}
 
 @Route("users")
 export class UsersController extends Controller {
@@ -22,6 +27,7 @@ export class UsersController extends Controller {
     return new UsersService().get(userId, name);
   }
 
+  @Response<ValidateErrorJSON>(422, "Validation Failed")
   @SuccessResponse("201", "Created") // Custom success response
   @Post()
   public async createUser(
