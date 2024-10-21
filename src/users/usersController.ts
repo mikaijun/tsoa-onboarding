@@ -8,9 +8,13 @@ import {
   Route,
   SuccessResponse,
   Response,
+  Middlewares,
+  Request,
+  Header,
 } from "tsoa";
 import { User } from "./user";
 import { UsersService, UserCreationParams } from "./usersService";
+import { AuthenticatedRequest, authMiddleware } from "../middleware/authMiddleware";
 
 interface ValidateErrorJSON {
   message: "Validation failed";
@@ -18,9 +22,12 @@ interface ValidateErrorJSON {
 }
 
 @Route("users")
+@Middlewares([authMiddleware])
 export class UsersController extends Controller {
   @Get("{userId}")
   public async getUser(
+    @Header('X-Access-Token') _token: string,
+    @Request() req: AuthenticatedRequest,
     @Path() userId: number,
     @Query() name?: string
   ): Promise<User> {
@@ -31,6 +38,7 @@ export class UsersController extends Controller {
   @SuccessResponse("201", "Created") // Custom success response
   @Post()
   public async createUser(
+    @Header('X-Access-Token') _token: string,
     @Body() requestBody: UserCreationParams
   ): Promise<void> {
     this.setStatus(201); // set return status 201

@@ -7,6 +7,9 @@
     "specVersion": 3
   },
   "routes": {
-    "routesDir": "build"
+    "routesDir": "build",
+    "middleware": {
+      "auth": "./src/middleware/authMiddleware"
+    }
   }
 }
